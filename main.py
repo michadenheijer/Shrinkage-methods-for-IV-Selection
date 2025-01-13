@@ -1,3 +1,4 @@
+# In[]:
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
@@ -5,6 +6,7 @@ from src.regression import RegressionModel
 from src.Lassomethods import LassoVariant
 import yaml
 
+# In[]:
 CONFIG_PATH = "configs/configJasper.yaml"
 
 def simulate_dataset(config):
@@ -36,6 +38,8 @@ def load_config(config_path):
     """Loads settings from a YAML configuration file."""
     with open(config_path, 'r') as file:
         return yaml.safe_load(file)
+    
+# In[]:
 
 # Example usage
 if __name__ == "__main__":
