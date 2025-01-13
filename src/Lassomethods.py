@@ -13,7 +13,7 @@ class LassoVariant:
     def fit(self, X, y):
         """Fits the Lasso model to the data."""
         if self.method == "lasso_cv":
-            self.model = LassoCV(cv=10, random_state=42, **self.kwargs).fit(X, y)
+            self.model = LassoCV(cv=self.kwargs['cv'], random_state=42).fit(X, y)
         else:
             raise ValueError(f"Unknown Lasso variant: {self.method}")
 
