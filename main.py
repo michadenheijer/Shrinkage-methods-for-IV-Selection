@@ -50,24 +50,24 @@ if __name__ == "__main__":
     Z, d, y = simulate_dataset(config)
 
     # Split data into training and testing sets
-    Z_train, Z_test, d_train, d_test, y_train, y_test = train_test_split(Z, d, y, test_size=config["split"]["test_size"], random_state=config["split"]["random_state"])
+    #Z_train, Z_test, d_train, d_test, y_train, y_test = train_test_split(Z, d, y, test_size=config["split"]["test_size"], random_state=config["split"]["random_state"])
 
     # In[]: Stage 1: Lasso for variable selection
     lasso = LassoVariant(method=config["lasso"]["method"], **config["lasso"]["kwargs"])
-    lasso.fit(Z_train, d_train)
+    lasso.fit(Z, d)
     selected_features = lasso.selected_features()
 
     # Use selected features
-    Z_selected_train = Z_train[:, selected_features]
-    Z_selected_test = Z_test[:, selected_features]
+    Z_selected = Z[:, selected_features]
+    #Z_selected_test = Z_test[:, selected_features]
 
     # In[]: Stage 2: Regression
     reg_model = RegressionModel(method=config["regression"]["method"])
-    reg_model.fit(Z_selected_train, y_train)
+    reg_model.fit(Z, y)
 
     # Evaluate the model
-    y_pred = reg_model.predict(Z_selected_test)
-    mse = mean_squared_error(y_test, y_pred)
+    y_pred = reg_model.predict(Z)
+    mse = mean_squared_error(y, y_pred)
 
     # Results
     print(f"Selected instruments: {selected_features}")
