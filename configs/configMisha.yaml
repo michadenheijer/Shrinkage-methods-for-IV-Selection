@@ -1,0 +1,22 @@
+dgp:
+  n_samples: 100
+  n_instruments: 100
+  beta_true: 1.0
+  rho_ev: 0.6
+  sigma_e: 1.0
+  sigma_v: 1.0
+  sigma_z: 1.0
+  correlation: 0.5
+
+split:
+  test_size: 0.2
+  random_state: 42
+
+lasso:
+  method: lasso_cv
+  kwargs:
+    cv: 10
+    random_state: 42
+
+regression:
+  method: ols
