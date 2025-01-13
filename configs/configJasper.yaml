@@ -13,9 +13,10 @@ split:
   random_state: 42
 
 lasso:
-  method: lasso_cv
+  method: standard_lasso
   kwargs:
-    cv: 10
+    lambda_method: cv
+    cv: 10 # Following spindler
     random_state: 42
 
 regression:

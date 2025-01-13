@@ -8,14 +8,23 @@ class LassoVariant:
     def __init__(self, method="lasso_cv", **kwargs):
         self.method = method.lower()
         self.kwargs = kwargs
-        self.model = None
+        self.model = self.model_selection()
 
+    def model_selection(self):
+        """Returns the model selection method."""
+        if self.method == "standard_lasso":
+            if self.kwargs['lambda_method'] == "cv":
+                return LassoCV(cv=self.kwargs['cv'], random_state=self.kwargs['random_state'])
+            elif self.kwargs['lambda_method'] == "Xdependent":
+                raise NotImplementedError("Xdependent lambda not implemented")
+            elif self.kwargs['lambda_method'] == "Xindependent":
+                raise NotImplementedError("Xindependent lambda not implemented")
+        else:
+            raise ValueError(f"Unknown Lasso method: {self.method}")
+            
     def fit(self, X, y):
         """Fits the Lasso model to the data."""
-        if self.method == "lasso_cv":
-            self.model = LassoCV(cv=self.kwargs['cv'], random_state=42).fit(X, y)
-        else:
-            raise ValueError(f"Unknown Lasso variant: {self.method}")
+        self.model = self.model.fit(X, y)
 
     def selected_features(self):
         """Returns indices of the selected features."""

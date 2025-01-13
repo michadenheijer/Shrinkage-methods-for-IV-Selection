@@ -31,8 +31,10 @@ def simulate_dataset(config):
     # Generate outcome variable (y)
     e = np.random.normal(0, sigma_e, size=n_samples)
     y = beta_true * d + e
+    
+    data = {"Z": Z, "d": d, "y": y}
 
-    return Z, d, y
+    return data
 
 def load_config(config_path):
     """Loads settings from a YAML configuration file."""
@@ -47,23 +49,23 @@ if __name__ == "__main__":
     config = load_config(CONFIG_PATH)
 
     # Generate data
-    Z, d, y = simulate_dataset(config)
+    data = simulate_dataset(config)
 
     # In[]: Stage 1: Lasso for variable selection
     lasso = LassoVariant(method=config["lasso"]["method"], **config["lasso"]["kwargs"])
-    lasso.fit(Z, d)
+    lasso.fit(data["Z"], data["d"])
     selected_features = lasso.selected_features()
 
     # Use selected features
-    Z_selected = Z[:, selected_features]
+    Z_selected = data["Z"][:, selected_features]
 
     # In[]: Stage 2: Regression
     reg_model = RegressionModel(method=config["regression"]["method"])
-    reg_model.fit(Z, y)
+    reg_model.fit(data["Z"], data["y"])
 
     # Evaluate the model
-    y_pred = reg_model.predict(Z)
-    mse = mean_squared_error(y, y_pred)
+    y_pred = reg_model.predict(data["Z"])
+    mse = mean_squared_error(data["y"], y_pred)
 
     # Results
     print(f"Selected instruments: {selected_features}")
