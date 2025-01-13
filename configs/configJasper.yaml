@@ -1,12 +1,13 @@
 dgp:
   n_samples: 100
-  n_instruments: 100
-  beta_true: 1.0
-  rho_ev: 0.6
-  sigma_e: 1.0
-  sigma_v: 1.0
-  sigma_z: 1.0
-  correlation: 0.5
+  design: Exponential # Either Exponential, 5, or 50 in Spindler
+  mu2: 30
+  n_instruments: 100 # Fixed in spindler
+  beta_true: 1.0 # Fixed in spindler
+  sigma_e: 1.0 # Fixed in spindler
+  rho_ev: 0.6 # Fixed in spindler
+  sigma_z: 1.0 # Fixed in spindler
+  correlation: 0.5 # Fixed in spindler
 
 split:
   test_size: 0.2
