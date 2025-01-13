@@ -69,9 +69,10 @@ def load_config(config_path):
 if __name__ == "__main__":
     # In[]: # Load configuration
     config = load_config(CONFIG_PATH)
+    seed = 42
 
     # Generate data
-    data = simulate_dataset(config)
+    data = simulate_dataset(config, seed)
 
     # In[]: Stage 1: Lasso for variable selection
     lasso = LassoVariant(method=config["lasso"]["method"], **config["lasso"]["kwargs"])
@@ -80,16 +81,19 @@ if __name__ == "__main__":
 
     # Use selected features
     Z_selected = data["Z"][:, selected_features]
+    print(f"Number of selected instruments: {Z_selected.shape[1]}")
 
     # In[]: Stage 2: Regression
+    constant = np.ones((len(Z_selected), 1))  # Add constant term (required for 2SLS)
     reg_model = RegressionModel(method=config["regression"]["method"])
-    reg_model.fit(data["Z"], data["y"])
+    reg_model.fit(dependent=data["y"], exog=constant, endog=data["d"], instruments=Z_selected)
 
     # Evaluate the model
-    y_pred = reg_model.predict(data["Z"])
-    mse = mean_squared_error(data["y"], y_pred)
+    # TODO: The evaluation doen
+    # y_pred = reg_model.predict(data["Z"])
+    # mse = mean_squared_error(data["y"], y_pred)
 
-    # Results
-    print(f"Selected instruments: {selected_features}")
-    print(f"Post-Lasso coefficients: {reg_model.coefficients()}")
-    print(f"Mean Squared Error: {mse}")
+    # # Results
+    # print(f"Selected instruments: {selected_features}")
+    # print(f"Post-Lasso coefficients: {reg_model.coefficients()}")
+    # print(f"Mean Squared Error: {mse}")

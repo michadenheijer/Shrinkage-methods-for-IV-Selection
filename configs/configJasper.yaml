@@ -21,4 +21,4 @@ lasso:
     random_state: 42
 
 regression:
-  method: ols
+  method: 2sls
