@@ -39,7 +39,7 @@ def load_config(config_path):
 
 # Example usage
 if __name__ == "__main__":
-    # Load configuration
+    # In[]: # Load configuration
     config = load_config(CONFIG_PATH)
 
     # Generate data
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     # Split data into training and testing sets
     Z_train, Z_test, d_train, d_test, y_train, y_test = train_test_split(Z, d, y, test_size=config["split"]["test_size"], random_state=config["split"]["random_state"])
 
-    # Stage 1: Lasso for variable selection
+    # In[]: Stage 1: Lasso for variable selection
     lasso = LassoVariant(method=config["lasso"]["method"], **config["lasso"]["kwargs"])
     lasso.fit(Z_train, d_train)
     selected_features = lasso.selected_features()
@@ -57,7 +57,7 @@ if __name__ == "__main__":
     Z_selected_train = Z_train[:, selected_features]
     Z_selected_test = Z_test[:, selected_features]
 
-    # Stage 2: Regression
+    # In[]: Stage 2: Regression
     reg_model = RegressionModel(method=config["regression"]["method"])
     reg_model.fit(Z_selected_train, y_train)
 
