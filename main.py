@@ -49,9 +49,6 @@ if __name__ == "__main__":
     # Generate data
     Z, d, y = simulate_dataset(config)
 
-    # Split data into training and testing sets
-    #Z_train, Z_test, d_train, d_test, y_train, y_test = train_test_split(Z, d, y, test_size=config["split"]["test_size"], random_state=config["split"]["random_state"])
-
     # In[]: Stage 1: Lasso for variable selection
     lasso = LassoVariant(method=config["lasso"]["method"], **config["lasso"]["kwargs"])
     lasso.fit(Z, d)
@@ -59,7 +56,6 @@ if __name__ == "__main__":
 
     # Use selected features
     Z_selected = Z[:, selected_features]
-    #Z_selected_test = Z_test[:, selected_features]
 
     # In[]: Stage 2: Regression
     reg_model = RegressionModel(method=config["regression"]["method"])
