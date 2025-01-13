@@ -5,6 +5,8 @@ from src.regression import RegressionModel
 from src.Lassomethods import LassoVariant
 import yaml
 
+CONFIG_PATH = "configs/configJasper.yaml"
+
 def simulate_dataset(config):
     """Generates the data based on the configuration settings."""
     n_samples = config["dgp"]["n_samples"]
@@ -38,7 +40,7 @@ def load_config(config_path):
 # Example usage
 if __name__ == "__main__":
     # Load configuration
-    config = load_config("config.yaml")
+    config = load_config(CONFIG_PATH)
 
     # Generate data
     Z, d, y = simulate_dataset(config)
