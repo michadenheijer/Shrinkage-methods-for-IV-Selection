@@ -1,8 +1,5 @@
 # In[]:
 import numpy as np
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
 from src.regression import RegressionModel
 from src.Lassomethods import LassoVariant
 from src.dataset import simulate_dataset
@@ -10,6 +7,7 @@ from src.output import generate_single_output
 import tqdm
 from joblib import Parallel, delayed
 import yaml
+from scipy.stats import norm
 
 # In[]:
 CONFIG_PATH = "configs/configJasper.yaml"
@@ -45,8 +43,9 @@ def single_simulation(config, seed=None):
     if config["regression"]["method"] == "2sls":
         bias = reg_coefficients.loc["exog"]
         absolute_deviation = np.abs(reg_coefficients.loc["endog"] - config["dgp"]["beta_true"])
-        p_values = reg_model.p_values()
-        reject = p_values.loc["endog"] < config["regression"]["alpha"]
+        z_value = (reg_coefficients.loc["endog"] - config["dgp"]["beta_true"]) / reg_model.model.std_errors.loc["endog"]
+        p_value = 2 * (1 - norm.cdf(np.abs(z_value)))
+        reject = p_value < config["regression"]["alpha"]
         
     elif config["regression"]["method"] == "fuller":
         raise NotImplementedError("Fuller method not implemented")
@@ -58,23 +57,8 @@ def single_simulation(config, seed=None):
     output = {"num_selected_instruments": num_selected_instruments, "bias": bias, "absolute_deviation": absolute_deviation, "reject": reject}
         
     return output
-    
-    
+     
 # In[]:
-def generate_single_output(results, config):
-    """Generates the output for a single estimator specification."""
-    # First set output in a dataframe
-    output = pd.DataFrame(results)
-    
-    
-    
-    # Determine number of instruments equal to 0
-    num_instruments = np.array([result["num_instruments"] for result in results])
-    num_instruments_0 = np.sum(num_instruments == 0)
-    
-    # Calculate medi
-
-
 
 # Example usage
 if __name__ == "__main__":
@@ -90,6 +74,7 @@ if __name__ == "__main__":
     
     # Generate output
     output = generate_single_output(results, config)
+    print(output)
     
     
     
