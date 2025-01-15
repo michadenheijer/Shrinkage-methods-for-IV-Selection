@@ -19,11 +19,10 @@ class RegressionModel:
             self.model = OLS(endog, exog).fit()
         elif self.method == "2sls":
             # Implement 2SLS here
-            # TODO: Jasper implementeren
             self.model = IV2SLS(dependent, exog, endog, instruments).fit()
         elif self.method == "fuller":
             # Implement Fuller here
-            self.model = IVLIML(dependent, exog, endog, instruments).fit()
+            self.model = IVLIML(dependent, exog, endog, instruments, fuller=1).fit()
         else:
             raise ValueError(f"Unknown regression method: {self.method}")
 
