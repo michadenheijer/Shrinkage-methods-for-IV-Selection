@@ -12,7 +12,7 @@ CONFIG_PATH = "configs/configJasper.yaml"
 def simulate_dataset(config, seed=None):
     """Generates the data based on the configuration settings."""
     n_samples = config["dgp"]["n_samples"]
-    n_instruments = config["dgp"]["n_instruments"]
+    n_instruments = config["dgp"]["n_instruments"] # Is set to 100 in Spindler
     mu2 = config["dgp"]["mu2"] 
     beta_true = config["dgp"]["beta_true"] # Is set to 1 in Spindler
     sigma_e = config["dgp"]["sigma_e"] # Is set to 1 in Spindler
