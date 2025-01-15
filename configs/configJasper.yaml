@@ -1,11 +1,11 @@
 seed: None # Either None or an integer
-num_simulations: 10
+num_simulations: 500
 n_cores: -1 # For multitasking, set to 1 for debugging and single tasking
 
 dgp:
   n_samples: 250
   design: Exponential # Either Exponential, 5, or 50 in Spindler
-  mu2: 30
+  mu2: 180
   n_instruments: 100 # Fixed in spindler
   beta_true: 1.0 # Fixed in spindler
   sigma_e: 1.0 # Fixed in spindler

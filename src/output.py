@@ -8,8 +8,7 @@ def generate_single_output(results, config):
     output = pd.DataFrame(results)
     
     # Determine number of instruments equal to 0
-    num_instruments = np.array([result["num_instruments"] for result in results])
-    num_instruments_0 = np.sum(num_instruments == 0)
+    num_instruments_0 = (output["num_selected_instruments"] == 0).sum()
     
     # Calculate median Bias
     median_bias = output["bias"].median()
