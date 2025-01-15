@@ -15,17 +15,17 @@ class RegressionModel:
 
     def fit(self, dependent, exog, endog, instruments):
         """Fits the regression model to the data."""
+
         if self.method == "2sls":
             self.model = IV2SLS(dependent, exog, endog, instruments).fit()
         elif self.method == "fuller":
-            self.model = IVLIML(dependent, exog, endog, instruments).fit()
+            self.model = IVLIML(dependent, exog, endog, instruments, fuller=1).fit()
         else:
             raise ValueError(f"Unknown regression method: {self.method}")
 
     def predict(self, X):
         """Predicts using the fitted model."""
         return self.model.predict(X)
-
 
     def coefficients(self):
         """Returns model coefficients."""
