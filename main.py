@@ -31,6 +31,7 @@ def single_simulation(config, seed=None):
     Z_selected = data["Z"][:, selected_features]
     num_selected_instruments = Z_selected.shape[1]
     
+    #TODO: JE when selected instruments are 0, adaptation is needed
 
     # In[]: Stage 2: Regression
     constant = np.ones((len(Z_selected), 1))  # Add constant term (required for 2SLS)
