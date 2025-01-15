@@ -1,6 +1,5 @@
 import numpy as np
 from sklearn.linear_model import Ridge, LinearRegression
-from statsmodels.api import OLS
 from linearmodels.iv import IVLIML, IV2SLS
 
 
@@ -29,7 +28,8 @@ class RegressionModel:
 
     def coefficients(self):
         """Returns model coefficients."""
-        if self.method == "ols":
-            return self.model.params
-        else:
-            return self.model.coef_
+        return self.model.params
+    
+    def p_values(self):
+        """Returns p-values of the coefficients"""
+        return self.model.pvalues

@@ -1,7 +1,9 @@
 seed: None # Either None or an integer
+num_simulations: 10
+n_cores: -1 # For multitasking, set to 1 for debugging and single tasking
 
 dgp:
-  n_samples: 100
+  n_samples: 250
   design: Exponential # Either Exponential, 5, or 50 in Spindler
   mu2: 30
   n_instruments: 100 # Fixed in spindler
@@ -11,9 +13,9 @@ dgp:
   sigma_z: 1.0 # Fixed in spindler
   correlation: 0.5 # Fixed in spindler
 
-split:
-  test_size: 0.2
-  random_state: 42
+# split:
+#   test_size: 0.2
+#   random_state: 42
 
 lasso:
   method: standard_lasso
@@ -24,3 +26,4 @@ lasso:
 
 regression:
   method: 2sls
+  alpha: 0.05

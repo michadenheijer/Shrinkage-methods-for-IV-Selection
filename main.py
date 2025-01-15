@@ -1,76 +1,26 @@
 # In[]:
 import numpy as np
+import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from src.regression import RegressionModel
 from src.Lassomethods import LassoVariant
+from src.dataset import simulate_dataset
+from src.output import generate_single_output
+import tqdm
+from joblib import Parallel, delayed
 import yaml
 
 # In[]:
 CONFIG_PATH = "configs/configJasper.yaml"
 
-def simulate_dataset(config, seed=None):
-    """Generates the data based on the configuration settings."""
-    n_samples = config["dgp"]["n_samples"]
-    n_instruments = config["dgp"]["n_instruments"] # Is set to 100 in Spindler
-    mu2 = config["dgp"]["mu2"] 
-    beta_true = config["dgp"]["beta_true"] # Is set to 1 in Spindler
-    sigma_e = config["dgp"]["sigma_e"] # Is set to 1 in Spindler
-    rho_ev = config["dgp"]["rho_ev"] # Is set to 0.6 in Spindler
-    sigma_z = config["dgp"]["sigma_z"] # Is set to 1 in Spindler
-    correlation = config["dgp"]["correlation"] # Is set to 0.5 in Spindler
-    
-    # Set seed if provided
-    if not seed is None:
-        np.random.seed(seed)
-    
-    # Generate instruments (Z)
-    cov_matrix = sigma_z * (correlation ** np.abs(np.subtract.outer(range(n_instruments), range(n_instruments))))
-    Z = np.random.multivariate_normal(np.zeros(n_instruments), cov_matrix, size=n_samples)
-
-    # Calculate the Pi tilde matrix
-    if config["dgp"]["design"] == "Exponential":
-        Pi_tilde = np.array([0.7**i for i in range(n_instruments)])
-    elif config["dgp"]["design"] in [5, 50]:
-        Pi_tilde = np.concatenate((np.ones(config["dgp"]["design"]), np.zeros(n_instruments - config["dgp"]["design"])))
-    else:
-        raise ValueError(f"Unknown design: {config['dgp']['design']}")
-    
-    # Calculate C
-    denominator = n_samples * Pi_tilde.T @ cov_matrix @ Pi_tilde + mu2 * Pi_tilde.T @ cov_matrix @ Pi_tilde
-    C = np.sqrt(mu2 / denominator)
-    
-    # Calculate the Pi matrix
-    Pi = C * Pi_tilde
-
-    # Generate error terms (v, e)
-    sigma_v = 1 - Pi.T @ cov_matrix @ Pi
-    cov_matrix_error = np.array([[sigma_e, rho_ev], [rho_ev, sigma_v]])
-    errors = np.random.multivariate_normal([0, 0], cov_matrix_error, size=n_samples)
-    
-    # Generate endogenous regressor (d)
-    d = Z @ Pi + errors[:, 1]
-    
-    # Generate outcome variable (y)
-    y = beta_true * d + errors[:, 0]
-    
-    data = {"Z": Z, "d": d, "y": y}
-
-    return data
 
 def load_config(config_path):
     """Loads settings from a YAML configuration file."""
     with open(config_path, 'r') as file:
         return yaml.safe_load(file)
     
-# In[]:
-
-# Example usage
-if __name__ == "__main__":
-    # In[]: # Load configuration
-    config = load_config(CONFIG_PATH)
-    seed = None if config["seed"] == "None" else config["seed"]
-
+def single_simulation(config, seed=None):
     # Generate data
     data = simulate_dataset(config, seed)
 
@@ -81,19 +31,67 @@ if __name__ == "__main__":
 
     # Use selected features
     Z_selected = data["Z"][:, selected_features]
-    print(f"Number of selected instruments: {Z_selected.shape[1]}")
+    num_selected_instruments = Z_selected.shape[1]
+    
 
     # In[]: Stage 2: Regression
     constant = np.ones((len(Z_selected), 1))  # Add constant term (required for 2SLS)
     reg_model = RegressionModel(method=config["regression"]["method"])
     reg_model.fit(dependent=data["y"], exog=constant, endog=data["d"], instruments=Z_selected)
+    reg_coefficients = reg_model.coefficients()
+    
+    # Now collect the output
+    # For 2SLS
+    if config["regression"]["method"] == "2sls":
+        bias = reg_coefficients.loc["exog"]
+        absolute_deviation = np.abs(reg_coefficients.loc["endog"] - config["dgp"]["beta_true"])
+        p_values = reg_model.p_values()
+        reject = p_values.loc["endog"] < config["regression"]["alpha"]
+        
+    elif config["regression"]["method"] == "fuller":
+        raise NotImplementedError("Fuller method not implemented")
+        # bias = reg_coefficients.loc["exog"]
+        # absolute_deviation = np.abs(reg_coefficients.loc["endog"] - config["dgp"]["beta_true"])
+        # p_values = reg_model.p_values()
+        # reject = p_values.loc["endog"] < config["regression"]["alpha"]
+        
+    output = {"num_selected_instruments": num_selected_instruments, "bias": bias, "absolute_deviation": absolute_deviation, "reject": reject}
+        
+    return output
+    
+    
+# In[]:
+def generate_single_output(results, config):
+    """Generates the output for a single estimator specification."""
+    # First set output in a dataframe
+    output = pd.DataFrame(results)
+    
+    
+    
+    # Determine number of instruments equal to 0
+    num_instruments = np.array([result["num_instruments"] for result in results])
+    num_instruments_0 = np.sum(num_instruments == 0)
+    
+    # Calculate medi
 
-    # Evaluate the model
-    # TODO: The evaluation doen
-    # y_pred = reg_model.predict(data["Z"])
-    # mse = mean_squared_error(data["y"], y_pred)
 
-    # # Results
-    # print(f"Selected instruments: {selected_features}")
-    # print(f"Post-Lasso coefficients: {reg_model.coefficients()}")
-    # print(f"Mean Squared Error: {mse}")
+
+# Example usage
+if __name__ == "__main__":
+    # In[]: # Load configuration
+    config = load_config(CONFIG_PATH)
+    seed = None if config["seed"] == "None" else config["seed"]
+    num_simulations = config["num_simulations"]
+    if num_simulations != 1 and seed is not None:
+        raise ValueError("Multiple simulations require seed to be None.")
+    
+    # Run simulations using joblib for parallel processing
+    results = Parallel(n_jobs=-config["n_cores"])(delayed(single_simulation)(config, seed) for _ in tqdm.tqdm(range(num_simulations)))
+    
+    # Generate output
+    output = generate_single_output(results, config)
+    
+    
+    
+    
+

@@ -1,4 +1,4 @@
-from sklearn.linear_model import LassoCV
+from sklearn.linear_model import LassoCV, Lasso
 import numpy as np
 
 class LassoVariant:
