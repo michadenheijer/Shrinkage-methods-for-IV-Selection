@@ -69,13 +69,13 @@ def load_config(config_path):
 if __name__ == "__main__":
     # In[]: # Load configuration
     config = load_config(CONFIG_PATH)
-    seed = 42
+    seed = None if config["seed"] == "None" else config["seed"]
 
     # Generate data
     data = simulate_dataset(config, seed)
 
     # In[]: Stage 1: Lasso for variable selection
-    lasso = LassoVariant(method=config["lasso"]["method"], **config["lasso"]["kwargs"])
+    lasso = LassoVariant(method=config["lasso"]["method"], seed=seed, **config["lasso"]["kwargs"])
     lasso.fit(data["Z"], data["d"])
     selected_features = lasso.selected_features()
 

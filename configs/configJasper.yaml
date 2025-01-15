@@ -1,3 +1,5 @@
+seed: None # Either None or an integer
+
 dgp:
   n_samples: 100
   design: Exponential # Either Exponential, 5, or 50 in Spindler
@@ -18,7 +20,7 @@ lasso:
   kwargs:
     lambda_method: cv
     cv: 10 # Following spindler
-    random_state: 42
+    max_iter: 10000 # Arbitrarily picked
 
 regression:
   method: 2sls

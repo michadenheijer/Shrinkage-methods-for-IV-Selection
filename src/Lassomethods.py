@@ -5,8 +5,9 @@ class LassoVariant:
     """
     A class to handle different Lasso variants and their settings.
     """
-    def __init__(self, method="lasso_cv", **kwargs):
+    def __init__(self, method="lasso_cv", seed=None, **kwargs):
         self.method = method.lower()
+        self.seed = seed
         self.kwargs = kwargs
         self.model = self.model_selection()
 
@@ -14,7 +15,7 @@ class LassoVariant:
         """Returns the model selection method."""
         if self.method == "standard_lasso":
             if self.kwargs['lambda_method'] == "cv":
-                return LassoCV(cv=self.kwargs['cv'], random_state=self.kwargs['random_state'])
+                return LassoCV(cv=self.kwargs['cv'], random_state=self.seed, max_iter=self.kwargs['max_iter'])
             elif self.kwargs['lambda_method'] == "Xdependent":
                 raise NotImplementedError("Xdependent lambda not implemented")
             elif self.kwargs['lambda_method'] == "Xindependent":
