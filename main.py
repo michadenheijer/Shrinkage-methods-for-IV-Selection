@@ -38,8 +38,14 @@ def single_simulation(config, seed=None):
     Z_selected = data["Z"][:, selected_features]
     num_selected_instruments = Z_selected.shape[1]
 
-    # TODO: JE when selected instruments are 0, adaptation is needed
-
+    # If no instruments are selected, return NaNs
+    if num_selected_instruments == 0:
+        return {
+            "num_selected_instruments": num_selected_instruments,
+            "bias": np.nan,
+            "absolute_deviation": np.nan,
+            "reject": np.nan,
+        }
     # In[]: Stage 2: Regression
     constant = np.ones((len(Z_selected), 1))  # Add constant term (required for 2SLS)
     reg_model = RegressionModel(method=config["regression"]["method"])
