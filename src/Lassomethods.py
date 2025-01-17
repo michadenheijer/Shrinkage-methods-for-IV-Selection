@@ -1,4 +1,4 @@
-from sklearn.linear_model import LassoCV, Lasso
+from sklearn.linear_model import ElasticNet, ElasticNetCV, LassoCV, Lasso
 from scipy.stats import norm
 import numpy as np
 
@@ -31,6 +31,20 @@ class LassoVariant:
                 return Lasso(max_iter=self.kwargs["max_iter"])
             elif self.kwargs["lambda_method"] == "Xindependent":
                 return Lasso(max_iter=self.kwargs["max_iter"])
+            else:
+                raise ValueError(f"Unknown Lambda method: {self.method}")
+        elif self.method == "elastic_net":
+            if self.kwargs["lambda_method"] == "cv":
+                return ElasticNetCV(
+                    cv=self.kwargs["cv"],
+                    random_state=self.seed,
+                    max_iter=self.kwargs["max_iter"],
+                    l1_ratio=self.kwargs["l1_ratio"],
+                )
+            else:
+                raise ValueError(f"Unknown Lambda method: {self.method}")
+        elif self.method == "minimax_concave_penalty":
+            raise NotImplementedError("Minimax concave penalty not implemented yet.")
         else:
             raise ValueError(f"Unknown Lasso method: {self.method}")
 
