@@ -1,13 +1,13 @@
 # In[]:
 import numpy as np
+import yaml
+from scipy.stats import norm
+from joblib import Parallel, delayed
+import tqdm
 from src.regression import RegressionModel
 from src.Lassomethods import LassoVariant
 from src.dataset import simulate_dataset
 from src.output import generate_single_output
-import tqdm
-from joblib import Parallel, delayed
-import yaml
-from scipy.stats import norm
 
 # In[]:
 CONFIG_PATH = "configs/configJasper.yaml"

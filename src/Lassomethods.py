@@ -1,9 +1,17 @@
-from sklearn.linear_model import ElasticNet, ElasticNetCV, LassoCV, Lasso
+from sklearn.linear_model import (
+    ElasticNet,
+    ElasticNetCV,
+    LassoCV,
+    LassoLarsCV,
+    Lasso,
+    LassoLarsIC,
+)
 from sklearn.model_selection import KFold
 from scipy.stats import norm
 import numpy as np
 
-from .mcp import MCPRegressionCV
+from .elastic_net import ElasticNetIC
+from .mcp import MCPRegressionCV, MCPRegressionIC
 
 
 class LassoVariant:
@@ -32,6 +40,8 @@ class LassoVariant:
             return Lasso(max_iter=self.kwargs["max_iter"])
         elif self.kwargs["lambda_method"] == "Xindependent":
             return Lasso(max_iter=self.kwargs["max_iter"])
+        elif self.kwargs["lambda_method"] == "information_criterion":
+            return LassoLarsIC(criterion=self.kwargs["criterion"])
         else:
             raise ValueError(f"Unknown Lambda method: {self.method}")
 
@@ -43,6 +53,8 @@ class LassoVariant:
                 max_iter=self.kwargs["max_iter"],
                 l1_ratio=self.kwargs["l1_ratio"],
             )
+        elif self.kwargs["lambda_method"] == "information_criterion":
+            return ElasticNetIC(max_iter=self.kwargs["max_iter"], criterion=self.kwargs["criterion"])
         else:
             raise ValueError(f"Unknown Lambda method: {self.method}")
 
@@ -53,6 +65,8 @@ class LassoVariant:
                 random_state=self.seed,
                 max_iter=self.kwargs["max_iter"],
             )
+        elif self.kwargs["lambda_method"] == "information_criterion":
+            return MCPRegressionIC(criterion=self.kwargs["criterion"])
         else:
             raise ValueError(f"Unknown Lambda method: {self.method}")
 
@@ -87,13 +101,7 @@ class LassoVariant:
             self.method == "standard_lasso"
             and self.kwargs["lambda_method"] == "Xdependent"
         ):
-            alpha = (
-                2
-                * self.kwargs["c"]
-                * np.sqrt(np.var(X))
-                * norm.ppf(1 - self.kwargs["alpha"] / (2 * self.n_samples))
-            )
-            self.model.set_params(alpha=alpha)
+            raise NotImplementedError("X-dependent lambda not implemented yet")
 
         self.model = self.model.fit(X, y)
 
