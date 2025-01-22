@@ -43,6 +43,8 @@ def single_simulation(config, seed=None):
 
     # If no instruments are selected, return NaNs
     if num_selected_instruments == 0:
+        test = 5
+        raise NotImplementedError("Dit moeten we nog even doen")
         return {
             "num_selected_instruments": num_selected_instruments,
             "bias": np.nan,
@@ -101,7 +103,7 @@ if __name__ == "__main__":
         np.random.seed(seed)
     
     # Lets loop over all different settings (not very clean)
-    for n_samples in [100, 250]:
+    for n_samples in [250, 100]:
         config["dgp"]["n_samples"] = n_samples
         
         for n_instruments in [100, 250]:
@@ -115,12 +117,12 @@ if __name__ == "__main__":
                 for mu2 in [30, 180]:
                     config["dgp"]["mu2"] = mu2
     
-                    
+                    print(f"Running simulations for: {n_samples} samples, {n_instruments} instruments, {design} design, mu2={mu2}")
                     # Run simulations using joblib for parallel processing
                     results = Parallel(n_jobs=-config["n_cores"])(delayed(single_simulation)(config, seed) for _ in tqdm.tqdm(range(num_simulations)))
                     
                     # Generate output
-                    output = generate_single_output(results, config, CONFIG_PATH)
+                    output = generate_single_output(results, config)
                     print(output)
     
     

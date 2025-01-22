@@ -3,7 +3,7 @@ import numpy as np
 import os
 
 
-def generate_single_output(results, config, CONFIG_PATH, save=True):
+def generate_single_output(results, config, save=True):
     """Generates the output for a single estimator specification."""
     # First set output in a dataframe
     output = pd.DataFrame(results)
@@ -34,10 +34,16 @@ def generate_single_output(results, config, CONFIG_PATH, save=True):
 
     # Save output in a csv file and results folder
     if save:
+        # Create results folder if it does not exist
+        if not os.path.exists("results"):
+            os.makedirs("results")
+        
         file_path = f"results/{config['model_name']}.csv"
         if os.path.exists(file_path):
             results.to_csv(file_path, mode='a', header=False, index=False)
         else:
             results.to_csv(file_path, index=False)
+            
+    return results
 
     

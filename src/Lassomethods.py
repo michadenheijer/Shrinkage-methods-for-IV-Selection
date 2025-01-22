@@ -37,6 +37,7 @@ class LassoVariant:
                 max_iter=self.kwargs["max_iter"],
             )
         elif self.kwargs["lambda_method"] == "Xdependent":
+            raise NotImplementedError("X-dependent lambda not implemented yet")
             return Lasso(max_iter=self.kwargs["max_iter"])
         elif self.kwargs["lambda_method"] == "Xindependent":
             return Lasso(max_iter=self.kwargs["max_iter"])
