@@ -10,7 +10,7 @@ from src.dataset import simulate_dataset
 from src.output import generate_single_output
 
 # In[]:
-CONFIG_PATH = "configs/configJasper.yaml"
+CONFIG_PATH = "configs/postLasso_CV.yaml"
 
 
 def load_config(config_path):
