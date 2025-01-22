@@ -7,16 +7,16 @@ def generate_single_output(results, config, CONFIG_PATH, save=True):
     """Generates the output for a single estimator specification."""
     # First set output in a dataframe
     output = pd.DataFrame(results)
-    
+
     # Determine number of instruments equal to 0
     num_instruments_0 = (output["num_selected_instruments"] == 0).sum()
-    
+
     # Calculate median Bias
     median_bias = output["bias"].median()
-    
+
     # Calculate median Absolute Deviation
     median_absolute_deviation = output["absolute_deviation"].median()
-    
+
     # Calculate rejection rate
     rejection_rate = output["reject"].mean()
     

@@ -14,7 +14,6 @@ class RegressionModel:
 
     def fit(self, dependent, exog, endog, instruments):
         """Fits the regression model to the data."""
-
         if self.method == "2sls":
             self.model = IV2SLS(dependent, exog, endog, instruments).fit()
         elif self.method == "fuller":
@@ -29,7 +28,7 @@ class RegressionModel:
     def coefficients(self):
         """Returns model coefficients."""
         return self.model.params
-    
+
     def p_values(self):
         """Returns p-values of the coefficients"""
         return self.model.pvalues
