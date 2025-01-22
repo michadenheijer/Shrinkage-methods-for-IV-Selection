@@ -19,8 +19,11 @@ def load_config(config_path):
         return yaml.safe_load(file)
     
 def single_simulation(config, seed=None):
+    if seed is not None:
+        np.random.seed(seed)
+    
     # Generate data
-    data = simulate_dataset(config, seed)
+    data = simulate_dataset(config)
 
     # In[]: Stage 1: Lasso for variable selection
     lasso = LassoVariant(method=config["lasso"]["method"], seed=seed, **config["lasso"]["kwargs"])
@@ -67,15 +70,33 @@ if __name__ == "__main__":
     config = load_config(CONFIG_PATH)
     seed = None if config["seed"] == "None" else config["seed"]
     num_simulations = config["num_simulations"]
-    if num_simulations != 1 and seed is not None:
-        raise ValueError("Multiple simulations require seed to be None.")
     
-    # Run simulations using joblib for parallel processing
-    results = Parallel(n_jobs=-config["n_cores"])(delayed(single_simulation)(config, seed) for _ in tqdm.tqdm(range(num_simulations)))
+    # Set seed if provided
+    if seed is not None:
+        np.random.seed(seed)
     
-    # Generate output
-    output = generate_single_output(results, config)
-    print(output)
+    # Lets loop over all different settings (not very clean)
+    for n_samples in [100, 250]:
+        config["dgp"]["n_samples"] = n_samples
+        
+        for n_instruments in [100, 250]:
+            if n_samples == 250 and n_instruments == 250:
+                continue
+            config["dgp"]["n_instruments"] = n_instruments
+        
+            for design in ["Exponential", 5, 50]:
+                config["dgp"]["design"] = design
+                
+                for mu2 in [30, 180]:
+                    config["dgp"]["mu2"] = mu2
+    
+                    
+                    # Run simulations using joblib for parallel processing
+                    results = Parallel(n_jobs=-config["n_cores"])(delayed(single_simulation)(config, seed) for _ in tqdm.tqdm(range(num_simulations)))
+                    
+                    # Generate output
+                    output = generate_single_output(results, config, CONFIG_PATH)
+                    print(output)
     
     
     

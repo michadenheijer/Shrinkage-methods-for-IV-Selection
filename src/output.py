@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
+import os
 
 
-def generate_single_output(results, config):
+def generate_single_output(results, config, CONFIG_PATH, save=True):
     """Generates the output for a single estimator specification."""
     # First set output in a dataframe
     output = pd.DataFrame(results)
@@ -19,6 +20,24 @@ def generate_single_output(results, config):
     # Calculate rejection rate
     rejection_rate = output["reject"].mean()
     
-    # Set in dataframe and return
-    return pd.DataFrame({"N(0)": num_instruments_0, "Bias": median_bias, "MAD": median_absolute_deviation, f"rp({config["regression"]["alpha"]})": rejection_rate}, index=[0])
+    # Collect some hyperparams
+    dataset_design = config["dgp"]["design"]
+    n_samples = config["dgp"]["n_samples"]
+    n_instruments = config["dgp"]["n_instruments"]
+    concentration = config["dgp"]["mu2"]
+    
+    # Set in dataframe also add seed
+    results = {"N(0)": num_instruments_0, "Bias": median_bias, "MAD": median_absolute_deviation, 
+               f"rp({config['regression']['alpha']})": rejection_rate, "Seed": config["seed"], "Design": dataset_design,
+               "N samples": n_samples, "N instruments": n_instruments, "Concentration": concentration}
+    results = pd.DataFrame([results])
+
+    # Save output in a csv file and results folder
+    if save:
+        file_path = f"results/{config['model_name']}.csv"
+        if os.path.exists(file_path):
+            results.to_csv(file_path, mode='a', header=False, index=False)
+        else:
+            results.to_csv(file_path, index=False)
+
     
