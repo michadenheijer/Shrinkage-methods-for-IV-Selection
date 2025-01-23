@@ -1,7 +1,7 @@
 seed: 42 # Either None or an integer
 num_simulations: 500
 n_cores: -1 # For multitasking, set to 1 for debugging and single tasking
-model_name: Minimax (CV)
+model_name: Minimax (BIC)
 
 dgp:
   n_samples: 250
@@ -17,7 +17,8 @@ dgp:
 lasso:
   method: minimax_concave_penalty
   kwargs:
-    lambda_method: cv
+    lambda_method: information_criterion
+    criterion: bic
     cv: 10 # Following spindler
     max_iter: 2000 # Arbitrarily picked
 

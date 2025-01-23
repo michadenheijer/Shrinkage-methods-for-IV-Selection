@@ -10,6 +10,9 @@ def generate_single_output(results, config, save=True):
 
     # Determine number of instruments equal to 0
     num_instruments_0 = (output["num_selected_instruments"] == 0).sum()
+    
+    # Determine the number of times the number of instruments was bigger than n_samples
+    num_instruments_bigger = (output["num_selected_instruments"] >= config["dgp"]["n_samples"]).sum()
 
     # Calculate median Bias
     median_bias = output["bias"].median()
@@ -30,7 +33,7 @@ def generate_single_output(results, config, save=True):
     results = {"N(0)": num_instruments_0, "Bias": median_bias, "MAD": median_absolute_deviation, 
                f"rp({config['regression']['alpha']})": rejection_rate, "Seed": config["seed"], "Design": dataset_design,
                "N samples": n_samples, "N instruments": n_instruments, "Concentration": concentration, "Model": config["model_name"],
-               "Correlation": config["dgp"]["correlation"]}
+               "Correlation": config["dgp"]["correlation"], "Instruments > N": num_instruments_bigger}
     results = pd.DataFrame([results])
 
     # Save output in a csv file and results folder

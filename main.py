@@ -10,7 +10,7 @@ from src.dataset import simulate_dataset
 from src.output import generate_single_output
 
 # In[]:
-CONFIG_PATH = "configs/postLasso_AIC.yaml"
+CONFIG_PATH = "configs/Elasticnet_AIC.yaml"
 
 
 def load_config(config_path):
@@ -48,8 +48,13 @@ def single_simulation(config, seed=None):
         max_corr_idx = np.argmax(correlation[:-1, -1])
         Z_selected = data["Z"][:, max_corr_idx]
         
+    if num_selected_instruments >= config["dgp"]["n_samples"]:
+        # Randomly select n_samples - 1 instruments from the selected instruments
+        selected_indices = np.random.choice(num_selected_instruments, config["dgp"]["n_samples"] - 1, replace=False)
+        Z_selected = Z_selected[:, selected_indices]
+        
     # In[]: Stage 2: Regression
-    constant = np.ones((len(Z_selected), 1))  # Add constant term (required for 2SLS)
+    constant = np.ones(data["Z"].shape[0])  # Add constant term (required for 2SLS)
     reg_model = RegressionModel(method=config["regression"]["method"])
     reg_model.fit(
         dependent=data["y"], exog=constant, endog=data["d"], instruments=Z_selected
@@ -100,7 +105,7 @@ if __name__ == "__main__":
         np.random.seed(seed)
     
     # Lets loop over all different settings (not very clean)
-    for n_samples in [250, 100]:
+    for n_samples in [100, 250]:
         config["dgp"]["n_samples"] = n_samples
         
         for n_instruments in [100, 250]:
@@ -120,7 +125,7 @@ if __name__ == "__main__":
     
                         print(f"Running simulations for: {n_samples} samples, {n_instruments} instruments, {design} design, mu2={mu2}")
                         # Run simulations using joblib for parallel processing
-                        results = Parallel(n_jobs=-config["n_cores"])(delayed(single_simulation)(config, seed) for _ in tqdm.tqdm(range(num_simulations)))
+                        results = Parallel(n_jobs=-config["n_cores"])(delayed(single_simulation)(config) for _ in tqdm.tqdm(range(num_simulations)))
                         
                         # Generate output
                         output = generate_single_output(results, config)

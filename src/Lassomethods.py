@@ -58,7 +58,7 @@ class LassoVariant:
                 l1_ratio=self.kwargs["l1_ratio"],
             )
         elif self.kwargs["lambda_method"] == "information_criterion":
-            return ElasticNetIC(max_iter=self.kwargs["max_iter"], criterion=self.kwargs["criterion"])
+            return ElasticNetIC(max_iter=self.kwargs["max_iter"], criterion=self.kwargs["criterion"], tol=1e-3)
         else:
             raise ValueError(f"Unknown Lambda method: {self.method}")
 

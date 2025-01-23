@@ -20,7 +20,7 @@ lasso:
     lambda_method: information_criterion
     cv: 10 # Following spindler
     criterion: aic
-    max_iter: 5000 # Arbitrarily picked
+    max_iter: 2000 # Arbitrarily picked
 
 regression:
   method: 2sls

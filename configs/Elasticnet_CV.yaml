@@ -19,7 +19,7 @@ lasso:
   kwargs:
     lambda_method: cv
     cv: 10 # Following spindler
-    max_iter: 5000 # Arbitrarily picked
+    max_iter: 2000 # Arbitrarily picked
 
 regression:
   method: 2sls
