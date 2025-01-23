@@ -1,7 +1,7 @@
 seed: 42 # Either None or an integer
 num_simulations: 500
 n_cores: -1 # For multitasking, set to 1 for debugging and single tasking
-model_name: Post-Lasso (CV)
+model_name: Minimax (IC)
 
 dgp:
   n_samples: 250
@@ -15,9 +15,9 @@ dgp:
   correlation: 0.5 # Fixed in spindlerawxcx
 
 lasso:
-  method: standard_lasso
+  method: minimax_concave_penalty
   kwargs:
-    lambda_method: cv
+    lambda_method: information_criterion
     cv: 10 # Following spindler
     max_iter: 5000 # Arbitrarily picked
 

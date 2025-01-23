@@ -1,7 +1,7 @@
 seed: 42 # Either None or an integer
 num_simulations: 500
 n_cores: -1 # For multitasking, set to 1 for debugging and single tasking
-model_name: Post-Lasso (CV)
+model_name: ElasticNet (CV)
 
 dgp:
   n_samples: 250
@@ -15,7 +15,7 @@ dgp:
   correlation: 0.5 # Fixed in spindlerawxcx
 
 lasso:
-  method: standard_lasso
+  method: elastic_net
   kwargs:
     lambda_method: cv
     cv: 10 # Following spindler

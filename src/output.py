@@ -29,7 +29,8 @@ def generate_single_output(results, config, save=True):
     # Set in dataframe also add seed
     results = {"N(0)": num_instruments_0, "Bias": median_bias, "MAD": median_absolute_deviation, 
                f"rp({config['regression']['alpha']})": rejection_rate, "Seed": config["seed"], "Design": dataset_design,
-               "N samples": n_samples, "N instruments": n_instruments, "Concentration": concentration}
+               "N samples": n_samples, "N instruments": n_instruments, "Concentration": concentration, "Model": config["model_name"],
+               "Correlation": config["dgp"]["correlation"]}
     results = pd.DataFrame([results])
 
     # Save output in a csv file and results folder

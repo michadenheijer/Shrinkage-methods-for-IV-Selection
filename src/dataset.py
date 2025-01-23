@@ -35,7 +35,7 @@ def simulate_dataset(config, seed=None):
     Pi = C * Pi_tilde
 
     # Generate error terms (v, e)
-    sigma_v = 1 - Pi.T @ cov_matrix @ Pi
+    sigma_v = max(0, 1 - Pi.T @ cov_matrix @ Pi)
     cov_matrix_error = np.array([[sigma_e, rho_ev], [rho_ev, sigma_v]])
     errors = np.random.multivariate_normal([0, 0], cov_matrix_error, size=n_samples)
     

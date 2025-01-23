@@ -1,7 +1,7 @@
 seed: 42 # Either None or an integer
 num_simulations: 500
 n_cores: -1 # For multitasking, set to 1 for debugging and single tasking
-model_name: Post-Lasso (CV)
+model_name: Post-Lasso (Xindep)
 
 dgp:
   n_samples: 250
@@ -12,12 +12,12 @@ dgp:
   sigma_e: 1.0 # Fixed in spindler
   rho_ev: 0.6 # Fixed in spindler
   sigma_z: 1.0 # Fixed in spindler
-  correlation: 0.5 # Fixed in spindlerawxcx
+  correlation: 0.5 # Fixed in spindler
 
 lasso:
   method: standard_lasso
   kwargs:
-    lambda_method: cv
+    lambda_method: Xindependent
     cv: 10 # Following spindler
     max_iter: 5000 # Arbitrarily picked
 

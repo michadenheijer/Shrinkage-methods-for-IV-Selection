@@ -10,7 +10,7 @@ from src.dataset import simulate_dataset
 from src.output import generate_single_output
 
 # In[]:
-CONFIG_PATH = "configs/postLasso_CV.yaml"
+CONFIG_PATH = "configs/postLasso_IC.yaml"
 
 
 def load_config(config_path):
@@ -43,14 +43,11 @@ def single_simulation(config, seed=None):
 
     # If no instruments are selected, return NaNs
     if num_selected_instruments == 0:
-        test = 5
-        raise NotImplementedError("Dit moeten we nog even doen")
-        return {
-            "num_selected_instruments": num_selected_instruments,
-            "bias": np.nan,
-            "absolute_deviation": np.nan,
-            "reject": np.nan,
-        }
+        # Use instrument with highest correlation
+        correlation = np.abs(np.corrcoef(data["Z"], data["d"], rowvar=False))
+        max_corr_idx = np.argmax(correlation[:-1, -1])
+        Z_selected = data["Z"][:, max_corr_idx]
+        
     # In[]: Stage 2: Regression
     constant = np.ones((len(Z_selected), 1))  # Add constant term (required for 2SLS)
     reg_model = RegressionModel(method=config["regression"]["method"])
@@ -116,14 +113,18 @@ if __name__ == "__main__":
                 
                 for mu2 in [30, 180]:
                     config["dgp"]["mu2"] = mu2
-    
-                    print(f"Running simulations for: {n_samples} samples, {n_instruments} instruments, {design} design, mu2={mu2}")
-                    # Run simulations using joblib for parallel processing
-                    results = Parallel(n_jobs=-config["n_cores"])(delayed(single_simulation)(config, seed) for _ in tqdm.tqdm(range(num_simulations)))
                     
-                    # Generate output
-                    output = generate_single_output(results, config)
-                    print(output)
+                    #for corr in [0.5, 0.9]:
+                    for corr in [0.9]:
+                        config["dgp"]["correlation"] = corr
+    
+                        print(f"Running simulations for: {n_samples} samples, {n_instruments} instruments, {design} design, mu2={mu2}")
+                        # Run simulations using joblib for parallel processing
+                        results = Parallel(n_jobs=-config["n_cores"])(delayed(single_simulation)(config, seed) for _ in tqdm.tqdm(range(num_simulations)))
+                        
+                        # Generate output
+                        output = generate_single_output(results, config)
+                        print(output)
     
     
     
