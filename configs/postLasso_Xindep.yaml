@@ -20,6 +20,8 @@ lasso:
     lambda_method: Xindependent
     cv: 10 # Following spindler
     max_iter: 2000 # Arbitrarily picked
+    c: 1.1
+    alpha: 0.05
 
 regression:
   method: 2sls
