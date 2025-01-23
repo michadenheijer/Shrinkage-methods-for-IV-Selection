@@ -1,7 +1,7 @@
 seed: 42 # Either None or an integer
 num_simulations: 500
 n_cores: -1 # For multitasking, set to 1 for debugging and single tasking
-model_name: ElasticNet (IC)
+model_name: Minimax (AIC)
 
 dgp:
   n_samples: 250
@@ -15,9 +15,10 @@ dgp:
   correlation: 0.5 # Fixed in spindlerawxcx
 
 lasso:
-  method: elastic_net
+  method: minimax_concave_penalty
   kwargs:
     lambda_method: information_criterion
+    criterion: aic
     cv: 10 # Following spindler
     max_iter: 5000 # Arbitrarily picked
 

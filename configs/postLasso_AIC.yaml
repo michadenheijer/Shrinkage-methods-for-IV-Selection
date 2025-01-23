@@ -1,7 +1,7 @@
 seed: 42 # Either None or an integer
 num_simulations: 500
 n_cores: -1 # For multitasking, set to 1 for debugging and single tasking
-model_name: Post-Lasso (IC)
+model_name: Post-Lasso (AIC)
 
 dgp:
   n_samples: 250
@@ -19,6 +19,7 @@ lasso:
   kwargs:
     lambda_method: information_criterion
     cv: 10 # Following spindler
+    criterion: aic
     max_iter: 5000 # Arbitrarily picked
 
 regression:

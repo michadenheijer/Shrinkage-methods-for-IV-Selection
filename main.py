@@ -10,7 +10,7 @@ from src.dataset import simulate_dataset
 from src.output import generate_single_output
 
 # In[]:
-CONFIG_PATH = "configs/postLasso_IC.yaml"
+CONFIG_PATH = "configs/postLasso_AIC.yaml"
 
 
 def load_config(config_path):
@@ -115,7 +115,7 @@ if __name__ == "__main__":
                     config["dgp"]["mu2"] = mu2
                     
                     #for corr in [0.5, 0.9]:
-                    for corr in [0.9]:
+                    for corr in [0.5, 0.9]:
                         config["dgp"]["correlation"] = corr
     
                         print(f"Running simulations for: {n_samples} samples, {n_instruments} instruments, {design} design, mu2={mu2}")
