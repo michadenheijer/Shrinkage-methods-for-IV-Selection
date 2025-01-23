@@ -10,7 +10,7 @@ from src.dataset import simulate_dataset
 from src.output import generate_single_output
 
 # In[]:
-CONFIG_PATH = "configs/Elasticnet_AIC.yaml"
+CONFIG_PATH = "configs/postLasso_BIC.yaml"
 
 
 def load_config(config_path):
