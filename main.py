@@ -10,9 +10,15 @@ from src.dataset import simulate_dataset
 from src.output import generate_single_output
 import warnings
 warnings.simplefilter('ignore', FutureWarning)
+warnings.simplefilter('ignore', DeprecationWarning)
+warnings.simplefilter('ignore', UserWarning)
+
+# Just suppress all warnings
+import warnings
+warnings.filterwarnings("ignore")
 
 # In[]:
-CONFIG_PATH = "configs/postLasso_BIC.yaml"
+CONFIG_PATH = "configs/Minimax_CV.yaml"
 
 
 def load_config(config_path):
