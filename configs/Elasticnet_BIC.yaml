@@ -1,7 +1,7 @@
 seed: 42 # Either None or an integer
 num_simulations: 500
 n_cores: -1 # For multitasking, set to 1 for debugging and single tasking
-model_name: ElasticNet (AIC)
+model_name: ElasticNet (BIC)
 
 dgp:
   n_samples: 250

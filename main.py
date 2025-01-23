@@ -8,6 +8,8 @@ from src.regression import RegressionModel
 from src.Lassomethods import LassoVariant
 from src.dataset import simulate_dataset
 from src.output import generate_single_output
+import warnings
+warnings.simplefilter('ignore', FutureWarning)
 
 # In[]:
 CONFIG_PATH = "configs/postLasso_BIC.yaml"
