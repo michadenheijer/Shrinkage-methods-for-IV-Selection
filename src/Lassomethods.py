@@ -25,9 +25,9 @@ class LassoVariant:
         self.method = method.lower()
         self.seed = seed
         self.kwargs = kwargs
-        self.model = self.model_selection()
         self.n_instruments = n_instruments
         self.n_samples = n_samples
+        self.model = self.model_selection()
 
     def _model_selection_standard_lasso(self):
         if self.kwargs["lambda_method"] == "cv":
@@ -42,7 +42,10 @@ class LassoVariant:
         elif self.kwargs["lambda_method"] == "Xindependent":
             return Lasso(max_iter=self.kwargs["max_iter"])
         elif self.kwargs["lambda_method"] == "information_criterion":
-            return LassoLarsIC(criterion=self.kwargs["criterion"])
+            if self.n_instruments >= self.n_samples:
+                return LassoLarsIC(criterion=self.kwargs["criterion"], noise_variance=1)
+            else:
+                return LassoLarsIC(criterion=self.kwargs["criterion"], )
         else:
             raise ValueError(f"Unknown Lambda method: {self.method}")
 
