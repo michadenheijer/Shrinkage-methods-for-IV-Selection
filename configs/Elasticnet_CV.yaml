@@ -20,6 +20,7 @@ lasso:
     lambda_method: cv
     cv: 10 # Following spindler
     max_iter: 2000 # Arbitrarily picked
+    l1_ratio: 0.5
 
 regression:
   method: 2sls
