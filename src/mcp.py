@@ -4,7 +4,7 @@ from skglm import MCPRegression
 
 
 class MCPRegressionCV:
-    def __init__(self, alphas=None, gammas=None, cv=5, random_state=42, max_iter=1000):
+    def __init__(self, alphas=None, gammas=None, cv=5, random_state=None, max_iter=1000):
         """
         Custom cross-validation for MCPRegression.
 
