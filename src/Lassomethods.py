@@ -90,6 +90,7 @@ class LassoVariant:
             self.method == "standard_lasso"
             and self.kwargs["lambda_method"] == "Xindependent"
         ):
+            #TODO: NOG EVEN HIER NAAR KIJKEN
             alpha = (
                 2
                 * self.kwargs["c"]

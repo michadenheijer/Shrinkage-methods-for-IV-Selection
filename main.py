@@ -18,7 +18,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 # In[]:
-CONFIG_PATH = "configs/Minimax_CV.yaml"
+CONFIG_PATH = "configs/postLasso_BIC.yaml"
 
 
 def load_config(config_path):
