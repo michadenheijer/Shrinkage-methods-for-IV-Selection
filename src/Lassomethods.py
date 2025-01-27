@@ -1,10 +1,7 @@
 from sklearn.linear_model import (
-    ElasticNet,
     ElasticNetCV,
     LassoCV,
-    LassoLarsCV,
     Lasso,
-    LassoLarsIC,
 )
 from sklearn.model_selection import KFold
 from scipy.stats import norm
@@ -12,6 +9,7 @@ import numpy as np
 
 from .elastic_net import ElasticNetIC
 from .mcp import MCPRegressionCV, MCPRegressionIC
+from .lasso_ic import LassoIC
 
 
 class LassoVariant:
@@ -42,10 +40,7 @@ class LassoVariant:
         elif self.kwargs["lambda_method"] == "Xindependent":
             return Lasso(max_iter=self.kwargs["max_iter"])
         elif self.kwargs["lambda_method"] == "information_criterion":
-            if self.n_instruments >= self.n_samples:
-                return LassoLarsIC(criterion=self.kwargs["criterion"], noise_variance=1)
-            else:
-                return LassoLarsIC(criterion=self.kwargs["criterion"], )
+            return LassoIC(criterion=self.kwargs["criterion"])
         else:
             raise ValueError(f"Unknown Lambda method: {self.method}")
 
@@ -58,7 +53,11 @@ class LassoVariant:
                 l1_ratio=self.kwargs["l1_ratio"],
             )
         elif self.kwargs["lambda_method"] == "information_criterion":
-            return ElasticNetIC(max_iter=self.kwargs["max_iter"], criterion=self.kwargs["criterion"], tol=1e-3)
+            return ElasticNetIC(
+                max_iter=self.kwargs["max_iter"],
+                criterion=self.kwargs["criterion"],
+                tol=1e-3,
+            )
         else:
             raise ValueError(f"Unknown Lambda method: {self.method}")
 
