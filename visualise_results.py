@@ -8,8 +8,8 @@ compare_models = ["ElasticNet (BIC)", "ElasticNet (CV)", "Minimax (BIC)", "Minim
 
 # Choose the metric to visualize: "MAD", "Bias", "rp(0.05)"
 metric = "MAD"
-n_samples = 100
-n_instruments = 250
+n_samples = 250
+n_instruments = 100
 
 fig, axs = plt.subplots(1, 2, figsize=(14, 7), sharey=True)
 
@@ -47,7 +47,7 @@ for i, correlation in enumerate([0.5, 0.9]):
 
 axs[0].set_ylabel(metric)
 axs[0].legend()
-fig.suptitle(f'Comparison of Models - N samples = {n_samples}, N instruments = {n_instruments}', fontsize=16)
+fig.suptitle(f'Comparison of Models and training methods for metric: {metric} (lower is better)', fontsize=20)
 plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 plt.savefig(f"plots/Comparison of Models - N samples = {n_samples}, N instruments = {n_instruments}, Metric = {metric}.png")
 plt.show()
