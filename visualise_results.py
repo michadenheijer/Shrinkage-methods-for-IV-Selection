@@ -8,7 +8,7 @@ compare_models = ["ElasticNet (BIC)", "ElasticNet (CV)", "Minimax (BIC)", "Minim
 
 correlation_values = [0.5, 0.9]
 n_samples = 100
-n_instruments = 100
+n_instruments = 250
 
 fig, axs = plt.subplots(1, 2, figsize=(14, 7), sharey=True)
 
