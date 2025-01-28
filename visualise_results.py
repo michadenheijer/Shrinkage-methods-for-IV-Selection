@@ -8,8 +8,8 @@ compare_models = ["ElasticNet (BIC)", "ElasticNet (CV)", "Minimax (BIC)", "Minim
 
 # Choose the metric to visualize: "MAD", "Bias", "rp(0.05)"
 metric = "MAD"
-n_samples = 250
-n_instruments = 100
+n_samples = 100
+n_instruments = 250
 
 fig, axs = plt.subplots(1, 2, figsize=(14, 7), sharey=True)
 
@@ -24,20 +24,26 @@ for i, correlation in enumerate([0.5, 0.9]):
     result_df = result_df.reset_index(drop=True)
     
     # Create bar chart
-    bar_width = 0.35
-    index = np.arange(len(compare_models))
-    colors = ['b', 'g']
+    bar_width = 0.2
+    index = np.arange(4)
+    colors = ['b', 'g', 'r']
+    model_types = ["ElasticNet", "Minimax", "Post-Lasso"]
     
-    for j, concentration in enumerate([30, 180]):
-        means = result_df[result_df["Concentration"] == concentration].groupby('Model')[metric].mean().reindex(compare_models)
-        stds = result_df[result_df["Concentration"] == concentration].groupby('Model')[metric].std().reindex(compare_models)
+    for j, model_type in enumerate(model_types):
+        means = []
+        stds = []
+        for concentration in [30, 180]:
+            for criterion in ["CV", "BIC"]:
+                model = f"{model_type} ({criterion})"
+                means.append(result_df[(result_df["Model"] == model) & (result_df["Concentration"] == concentration)][metric].mean())
+                stds.append(result_df[(result_df["Model"] == model) & (result_df["Concentration"] == concentration)][metric].std())
         
-        axs[i].bar(index + j * bar_width, means, bar_width, yerr=stds, capsize=5, label=f'Concentration = {concentration}', color=colors[j])
+        axs[i].bar(index + j * bar_width, means, bar_width, yerr=stds, capsize=5, label=model_type, color=colors[j])
     
-    axs[i].set_xlabel('Models')
+    #axs[i].set_xlabel('Models')
     axs[i].set_title(f'Correlation = {correlation}')
-    axs[i].set_xticks(index + bar_width / 2)
-    axs[i].set_xticklabels(compare_models, rotation=45, ha='right')
+    axs[i].set_xticks(index + bar_width)
+    axs[i].set_xticklabels(['$\mu^2=30$, CV', '$\mu^2=30$, BIC', '$\mu^2=180$, CV', '$\mu^2=180$, BIC'], rotation=45, ha='right')
 
 axs[0].set_ylabel(metric)
 axs[0].legend()
