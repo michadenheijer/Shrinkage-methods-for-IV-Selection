@@ -6,13 +6,14 @@ import pandas as pd
 # Medium colinearity & 100 instruments
 compare_models = ["ElasticNet (BIC)", "ElasticNet (CV)", "Minimax (BIC)", "Minimax (CV)", "Post-Lasso (BIC)", "Post-Lasso (CV)"]
 
-correlation_values = [0.5, 0.9]
-n_samples = 100
-n_instruments = 250
+# Choose the metric to visualize: "MAD", "Bias", "rp(0.05)"
+metric = "MAD"
+n_samples = 250
+n_instruments = 100
 
 fig, axs = plt.subplots(1, 2, figsize=(14, 7), sharey=True)
 
-for i, correlation in enumerate(correlation_values):
+for i, correlation in enumerate([0.5, 0.9]):
     result_df = pd.DataFrame()
     for concentration in [30, 180]:
         for model in compare_models:
@@ -28,8 +29,8 @@ for i, correlation in enumerate(correlation_values):
     colors = ['b', 'g']
     
     for j, concentration in enumerate([30, 180]):
-        means = result_df[result_df["Concentration"] == concentration].groupby('Model')['MAD'].mean().reindex(compare_models)
-        stds = result_df[result_df["Concentration"] == concentration].groupby('Model')['MAD'].std().reindex(compare_models)
+        means = result_df[result_df["Concentration"] == concentration].groupby('Model')[metric].mean().reindex(compare_models)
+        stds = result_df[result_df["Concentration"] == concentration].groupby('Model')[metric].std().reindex(compare_models)
         
         axs[i].bar(index + j * bar_width, means, bar_width, yerr=stds, capsize=5, label=f'Concentration = {concentration}', color=colors[j])
     
@@ -38,9 +39,9 @@ for i, correlation in enumerate(correlation_values):
     axs[i].set_xticks(index + bar_width / 2)
     axs[i].set_xticklabels(compare_models, rotation=45, ha='right')
 
-axs[0].set_ylabel('Mean Absolute Deviation (MAD)')
+axs[0].set_ylabel(metric)
 axs[0].legend()
 fig.suptitle(f'Comparison of Models - N samples = {n_samples}, N instruments = {n_instruments}', fontsize=16)
 plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-plt.savefig(f"plots/Comparison of Models - N samples = {n_samples}, N instruments = {n_instruments}.png")
+plt.savefig(f"plots/Comparison of Models - N samples = {n_samples}, N instruments = {n_instruments}, Metric = {metric}.png")
 plt.show()
